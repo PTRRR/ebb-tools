@@ -1,2 +1,4 @@
 import * as commands from './commands';
-export { commands };
+import * as server from './server';
+
+export { commands, server };
