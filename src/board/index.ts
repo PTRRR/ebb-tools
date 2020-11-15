@@ -1,11 +1,10 @@
 import * as SerialPort from 'serialport';
 import SerialConnection from './serialConnection';
-import { GeneralQueryResponse } from './types';
+import { GeneralQueryResponse, ConfigType } from './types';
 import * as commands from './commands';
-import { clamp, hex2bin } from './utils/math';
+import { hex2bin } from './utils/math';
 
-const MILLIMETER_IN_STEPS = 80;
-const DEFAULT_EBB_CONFIG = {
+const DEFAULT_EBB_CONFIG: ConfigType = {
   maxWidth: 420,
   maxHeight: 297,
   minStepsPerMillisecond: 0.07,
@@ -25,23 +24,23 @@ class Board {
   private position: [number, number] = [0, 0];
   private speed: number = 40;
 
-  constructor(port: SerialPort, config: any) {
+  constructor(port: SerialPort, config: ConfigType) {
     this.connection = new SerialConnection(port);
     this.config = config || DEFAULT_EBB_CONFIG;
   }
 
-  setConfig(config: any) {
+  setConfig(config: ConfigType) {
     this.config = config;
     const { minServoHeight, maxServoHeight, servoRate } = this.config;
 
-    return [
+    const promises = [
       this.reset(),
       this.setServoMinHeight(minServoHeight),
       this.setServoMaxHeight(maxServoHeight),
       this.setServoRate(servoRate),
-      this.raiseBrush(),
-      this.disableStepperMotors(),
-    ].join();
+    ];
+
+    return Promise.all(promises);
   }
 
   parseGeneralQueryResponse(status: string): GeneralQueryResponse {
@@ -71,7 +70,7 @@ class Board {
     };
   }
 
-  async waitForEmptyQueue(): Promise<boolean> {
+  async waitForEmptyQueue() {
     let empty = false;
 
     while (!empty) {
@@ -168,24 +167,13 @@ class Board {
   }
 
   home() {
-    this.position = [0, 0];
     return this.connection.write(commands.homeMove({ stepRate: 10000 }));
   }
 
   moveTo(targetX: number, targetY: number) {
     const [x, y] = this.position;
     this.position = [targetX, targetY];
-
-    const {
-      maxWidth,
-      maxHeight,
-      minStepsPerMillisecond,
-      maxStepsPerMillisecond,
-    } = this.config;
-
-    targetX = clamp(targetX, 0, maxWidth * MILLIMETER_IN_STEPS);
-    targetY = clamp(targetY, 0, maxHeight * MILLIMETER_IN_STEPS);
-    this.position = [targetX, targetY];
+    const { minStepsPerMillisecond, maxStepsPerMillisecond } = this.config;
 
     const { amountX, amountY } = commands.getAmountSteps(
       x,

@@ -1,6 +1,6 @@
 {
   "name": "ebb-tools",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Tools for controlling EBB board through JavaScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@types/koa": "^2.11.6",
+    "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-json": "^2.0.18",
     "@types/koa-logger": "^3.1.1",
     "@types/koa-router": "^7.4.1",
