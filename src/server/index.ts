@@ -1,20 +1,16 @@
-import * as Koa from 'koa';
-import * as Router from 'koa-router';
-import * as logger from 'koa-logger';
-import * as json from 'koa-json';
+import SerialConnection from '../serialConnection';
+import app from './app';
 
-const app = new Koa();
-const router = new Router();
+class Server {
+  private serialConnection: typeof SerialConnection;
 
-router.get('/', async (ctx, next) => {
-  ctx.body = { msg: 'hello' };
-  await next();
-});
+  constructor(serialConnection: typeof SerialConnection) {
+    this.serialConnection = serialConnection;
+  }
 
-app.use(json());
-app.use(logger());
-app.use(router.routes());
-app.use(router.allowedMethods());
+  start(port: number, callback: any | undefined) {
+    app.listen(port, callback || (() => null));
+  }
+}
 
-Object.freeze(app);
-export { app };
+export { Server };

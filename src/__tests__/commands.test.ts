@@ -1,4 +1,4 @@
-import * as commands from '../commands';
+import * as commands from '../board/commands';
 
 test('Reboot command', () => {
   expect(commands.reboot()).toBe('RB\r');

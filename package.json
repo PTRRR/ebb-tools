@@ -1,6 +1,6 @@
 {
   "name": "ebb-tools",
-  "version": "1.0.2",
+  "version": "1.0.5",
   "description": "Tools for controlling EBB board through JavaScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -12,6 +12,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "test": "jest --config jestconfig.json",
+    "start:local": "npm run build && node local/index.js",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
@@ -35,10 +36,13 @@
     "@types/koa-json": "^2.0.18",
     "@types/koa-logger": "^3.1.1",
     "@types/koa-router": "^7.4.1",
+    "@types/serialport": "^8.0.1",
+    "hex-to-binary": "^1.0.1",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-json": "^2.0.2",
     "koa-logger": "^3.2.1",
-    "koa-router": "^10.0.0"
+    "koa-router": "^10.0.0",
+    "serialport": "^9.0.2"
   }
 }
