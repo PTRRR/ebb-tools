@@ -1,3 +1,6 @@
+import * as SerialPort from 'serialport';
+import SerialConnection from './serialConnection';
+import { GeneralQueryResponse } from './types';
 import * as commands from './commands';
 import { clamp, hex2bin } from './utils/math';
 
@@ -16,12 +19,14 @@ const DEFAULT_EBB_CONFIG = {
 };
 
 class Board {
+  private connection: SerialConnection;
   private config: any = {};
   private penIsDown: boolean = false;
   private position: [number, number] = [0, 0];
   private speed: number = 40;
 
-  constructor(config: any) {
+  constructor(port: SerialPort, config: any) {
+    this.connection = new SerialConnection(port);
     this.config = config || DEFAULT_EBB_CONFIG;
   }
 
@@ -39,11 +44,7 @@ class Board {
     ].join();
   }
 
-  generalQuery() {
-    return commands.generalQuery();
-  }
-
-  parseGeneralQueryResponse(status: string) {
+  parseGeneralQueryResponse(status: string): GeneralQueryResponse {
     const binary = hex2bin(status);
     const bits = binary.split('').map((it: string) => parseInt(it, 10));
 
@@ -70,72 +71,105 @@ class Board {
     };
   }
 
+  async waitForEmptyQueue(): Promise<boolean> {
+    let empty = false;
+
+    while (!empty) {
+      const response = await this.generalQuery();
+      const { commandExecuting, queueStatus } = this.parseGeneralQueryResponse(
+        response,
+      );
+
+      if (commandExecuting === 0 && queueStatus === 0) empty = true;
+    }
+
+    return true;
+  }
+
+  generalQuery() {
+    return this.connection.write(commands.generalQuery());
+  }
+
   getVersion() {
-    return commands.version();
+    return this.connection.write(commands.version());
   }
 
   reset() {
-    return commands.reset();
+    return this.connection.write(commands.reset());
   }
 
   setServoMinHeight(minHeight: number) {
-    return commands.stepperAndServoModeConfigure({
-      parameter: 4,
-      integer: minHeight,
-    });
+    return this.connection.write(
+      commands.stepperAndServoModeConfigure({
+        parameter: 4,
+        integer: minHeight,
+      }),
+    );
   }
 
   setServoMaxHeight(maxHeight: number) {
-    return commands.stepperAndServoModeConfigure({
-      parameter: 5,
-      integer: maxHeight,
-    });
+    return this.connection.write(
+      commands.stepperAndServoModeConfigure({
+        parameter: 5,
+        integer: maxHeight,
+      }),
+    );
   }
 
   setServoRate(servoRate: number) {
-    return commands.stepperAndServoModeConfigure({
-      parameter: 10,
-      integer: servoRate,
-    });
+    return this.connection.write(
+      commands.stepperAndServoModeConfigure({
+        parameter: 10,
+        integer: servoRate,
+      }),
+    );
   }
 
   enableStepperMotors() {
-    return commands.enableMotors({
-      enable1: 1,
-      enable2: 1,
-    });
+    return this.connection.write(
+      commands.enableMotors({
+        enable1: 1,
+        enable2: 1,
+      }),
+    );
   }
 
   disableStepperMotors() {
-    return commands.enableMotors({
-      enable1: 0,
-      enable2: 0,
-    });
+    return this.connection.write(
+      commands.enableMotors({
+        enable1: 0,
+        enable2: 0,
+      }),
+    );
   }
 
   lowerBrush() {
     const duration = this.penIsDown ? 0 : 150;
     this.penIsDown = true;
 
-    return commands.setPenState({
-      state: 0,
-      duration,
-    });
+    return this.connection.write(
+      commands.setPenState({
+        state: 0,
+        duration,
+      }),
+    );
   }
 
   raiseBrush() {
     const duration = this.penIsDown ? 150 : 0;
     this.penIsDown = false;
 
-    return commands.setPenState({
-      state: 1,
-      duration,
-    });
+    return this.connection.write(
+      commands.setPenState({
+        state: 1,
+        duration,
+      }),
+    );
   }
 
   home() {
     this.position = [0, 0];
-    commands.homeMove({ stepRate: 10000 });
+    return this.connection.write(commands.homeMove({ stepRate: 10000 }));
   }
 
   moveTo(targetX: number, targetY: number) {
@@ -174,7 +208,7 @@ class Board {
       axisSteps2: amountY,
     };
 
-    return commands.stepperMove(args);
+    return this.connection.write(commands.stepperMove(args));
   }
 }
 

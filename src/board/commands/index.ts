@@ -74,7 +74,7 @@ export const reboot = () => {
  * Example: R<CR>
  */
 
-export const reset = () => {
+export const reset = (): string => {
   return 'R\r';
 };
 
@@ -113,7 +113,7 @@ type StepperAndServoModeConfigureArguments = {
 
 export const stepperAndServoModeConfigure = (
   args: StepperAndServoModeConfigureArguments,
-) => {
+): string => {
   const { parameter, integer } = args;
   return `SC,${parameter},${integer}\r`;
 };
@@ -150,7 +150,7 @@ type SetPenStateArguments = {
   duration: number;
 };
 
-export const setPenState = (args: SetPenStateArguments) => {
+export const setPenState = (args: SetPenStateArguments): string => {
   const { state, duration } = args;
   return `SP,${state},${duration}\r`;
 };
@@ -203,7 +203,7 @@ type EnableMotorsArguments = {
   enable2: number;
 };
 
-export const enableMotors = (args: EnableMotorsArguments) => {
+export const enableMotors = (args: EnableMotorsArguments): string => {
   const { enable1, enable2 } = args;
   return `EM,${enable1},${enable2}\r`;
 };
@@ -283,7 +283,7 @@ type HomeMoveArguments = {
   stepRate: number;
 };
 
-export const homeMove = (args: HomeMoveArguments) => {
+export const homeMove = (args: HomeMoveArguments): string => {
   const { stepRate } = args;
   return `HM,${stepRate}\r`;
 };
@@ -316,7 +316,7 @@ type StepperMoveArguments = {
   axisSteps2: number;
 };
 
-export const stepperMove = (args: StepperMoveArguments) => {
+export const stepperMove = (args: StepperMoveArguments): string => {
   const { duration, axisSteps1, axisSteps2 } = args;
   return `SM,${duration},${axisSteps1},${axisSteps2}\r`;
 };
@@ -330,7 +330,7 @@ type LowLevelMoveArguments = {
   deltaR2: number;
 };
 
-export const lowLevelMove = (args: LowLevelMoveArguments) => {
+export const lowLevelMove = (args: LowLevelMoveArguments): string => {
   const {
     rateTerm1,
     axisSteps1,
@@ -387,7 +387,7 @@ export const lowLevelMove = (args: LowLevelMoveArguments) => {
  *  Motor2Status is 1 if motor 2 is currently moving, and 0 if it is idle.
  */
 
-export const queryMotor = () => {
+export const queryMotor = (): string => {
   return 'QM\r';
 };
 
@@ -438,7 +438,7 @@ export const queryMotor = () => {
  * information about the motion queue can be found in the description of the QM query.
  */
 
-export const generalQuery = () => {
+export const generalQuery = (): string => {
   return 'QG\r';
 };
 
@@ -450,6 +450,6 @@ export const generalQuery = () => {
  * actual version string returned may be different from the example above.
  */
 
-export const version = () => {
+export const version = (): string => {
   return 'V\r';
 };
