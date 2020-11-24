@@ -1,4 +1,5 @@
 import * as SerialPort from 'serialport';
+import * as Readline from '@serialport/parser-readline';
 
 export type CommandType = {
   command: string;
@@ -13,7 +14,8 @@ class SerialConnection {
     if (!port) throw new Error('No serial port');
     this.port = port;
 
-    this.port.on('data', async (data: string) => {
+    const parser = this.port.pipe(new Readline({ delimiter: '\r\n' }));
+    parser.on('data', async (data: string) => {
       const message = `${data}`.trim();
       const { resolve } = this.queue.shift() || {};
       if (resolve) resolve(message);

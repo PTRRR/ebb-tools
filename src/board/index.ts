@@ -5,16 +5,11 @@ import * as commands from './commands';
 import { hex2bin } from './utils/math';
 
 const DEFAULT_EBB_CONFIG: ConfigType = {
-  maxWidth: 420,
-  maxHeight: 297,
   minStepsPerMillisecond: 0.07,
   maxStepsPerMillisecond: 15,
   servoRate: 40000,
-  minServoHeight: 20000,
-  maxServoHeight: 16000,
-  drawingSpeed: 40,
-  movingSpeed: 70,
-  minDeltaPositionForDistinctLines: 2,
+  minServoHeight: 19000,
+  maxServoHeight: 14000,
 };
 
 class Board {
@@ -22,25 +17,22 @@ class Board {
   private config: any = {};
   private penIsDown: boolean = false;
   private position: [number, number] = [0, 0];
-  private speed: number = 40;
+  private speed: number = 50;
 
   constructor(port: SerialPort, config: ConfigType) {
     this.connection = new SerialConnection(port);
-    this.config = config || DEFAULT_EBB_CONFIG;
+    this.setConfig(config || DEFAULT_EBB_CONFIG);
   }
 
   setConfig(config: ConfigType) {
     this.config = config;
     const { minServoHeight, maxServoHeight, servoRate } = this.config;
 
-    const promises = [
-      this.reset(),
-      this.setServoMinHeight(minServoHeight),
-      this.setServoMaxHeight(maxServoHeight),
-      this.setServoRate(servoRate),
-    ];
-
-    return Promise.all(promises);
+    this.reset();
+    this.setServoMinHeight(minServoHeight);
+    this.setServoMaxHeight(maxServoHeight);
+    this.setServoRate(servoRate);
+    this.disableStepperMotors();
   }
 
   parseGeneralQueryResponse(status: string): GeneralQueryResponse {
@@ -68,6 +60,12 @@ class Board {
       motor2Moving,
       queueStatus,
     };
+  }
+
+  wait(timeout: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, timeout);
+    });
   }
 
   async waitForEmptyQueue() {
