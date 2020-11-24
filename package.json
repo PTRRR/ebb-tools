@@ -1,6 +1,6 @@
 {
   "name": "ebb-tools",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "Tools for controlling EBB board through JavaScript",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
