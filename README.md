@@ -30,6 +30,8 @@ and a method to create a port from a serial path:
 EBB.serialPort.getPort({ path });
 ```
 
+Here is an example how you would find the right serial path and create a new `Board` instance to control an Axidraw for example:
+
 ```javascript
 
 const EBB = require('ebb-tools');
@@ -42,3 +44,9 @@ const connect = async () => {
 }
 
 ```
+
+### Board class
+
+---
+
+The Board class exposes simple motion commands
