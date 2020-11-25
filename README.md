@@ -30,7 +30,7 @@ and a method to create a port from a serial path:
 EBB.serialPort.getPort({ path });
 ```
 
-```js
+```javascript
 
 const EBB = require('ebb-tools');
 
