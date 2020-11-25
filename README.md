@@ -20,13 +20,13 @@ The connection with the board is established with the excellent [serialport](htt
 
 EBB Tools proposes a method to get all connected devices:
 
-```
+```javascript
 EBB.serialPort.getList();
 ```
 
 and a method to create a port from a serial path:
 
-```
+```javascript
 EBB.serialPort.getPort({ path });
 ```
 
