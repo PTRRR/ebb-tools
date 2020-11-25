@@ -121,6 +121,10 @@ await board.setConfig({
 })
 ```
 
+## Examples
+
+You can find examples of how to use this module in this GitHub repo: [https://github.com/PTRRR/axidraw](https://github.com/PTRRR/axidraw)
+
 ## Issues
 
 You might encounter build issues with this module on Windows. To solve this problem you have to install `windows-buid-tools` on your machine.
