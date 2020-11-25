@@ -24,6 +24,10 @@ class Board {
     this.setConfig(config || DEFAULT_EBB_CONFIG);
   }
 
+  setSpeed(speed: number) {
+    this.speed = speed;
+  }
+
   setConfig(config: ConfigType) {
     this.config = config;
     const { minServoHeight, maxServoHeight, servoRate } = this.config;

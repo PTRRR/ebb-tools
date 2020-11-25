@@ -93,6 +93,20 @@ This command is used to enable stepper motors.
 await board.enableStepperMotors()
 ```
 
+### `Board.setSpeed`
+
+This command is used to modify the moving speed.
+
+```javascript
+// This command will execute slowly.
+await board.setSpeed(10);
+await board.moveTo(1000, 1000);
+
+// This command will execute faster.
+await board.setSpeed(100);
+await board.moveTo(2000, 2000);
+```
+
 ### `Board.setConfig`
 
 This command is used to modify the default config.
