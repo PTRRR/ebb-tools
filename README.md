@@ -111,4 +111,4 @@ await board.setConfig({
 
 You might encounter build issues with this module on Windows. To solve this problem you have to install `windows-buid-tools` on your machine.
 
-Run npm install --global --production windows-build-tools from an administrative PowerShell.
+Run `npm install --global --production windows-build-tools` from an administrative PowerShell.
