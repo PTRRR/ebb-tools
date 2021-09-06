@@ -23,7 +23,7 @@ const EBB = require('ebb-tools');
 
 const connect = async () => {
   // First list all connected devices
-  const const list = await EBB.serialPort.getList();
+  const list = await EBB.serialPort.getList();
 
   // Find the corresponding devices's serial path.
   const { path } = list.find((it) => it.vendorId === '04d8');
